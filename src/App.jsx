@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import UserInfoForm from "./components/UserInfoForm";
 import Quiz from "./components/Quiz";
@@ -59,40 +59,38 @@ const App = () => {
   };
 
   return (
-    <BrowserRouter>
-      <div className="App">
-        <header>
-          <Navbar />
-        </header>
-        <main>
-          <Routes>
-            <Route
-              path="/quiz"
-              element={
-                step === 0 ? (
-                  <UserInfoForm onSubmit={handleFormSubmit} />
-                ) : step <= questions.length ? (
-                  <Quiz
-                    step={step}
-                    question={questions[step - 1]?.question}
-                    options={questions[step - 1]?.options}
-                    onAnswer={handleAnswer}
-                    onNext={handleNextStep}
-                    onBack={handlePreviousStep}
-                  />
-                ) : (
-                  <Result
-                    userInfo={userInfo}
-                    resultData={calculatePersonalityType()}
-                  />
-                )
-              }
-            />
-            <Route path="*" element={<Welcome />} />
-          </Routes>
-        </main>
-      </div>
-    </BrowserRouter>
+    <div className="App">
+      <header>
+        <Navbar />
+      </header>
+      <main>
+        <Routes>
+          <Route
+            path="/quiz"
+            element={
+              step === 0 ? (
+                <UserInfoForm onSubmit={handleFormSubmit} />
+              ) : step <= questions.length ? (
+                <Quiz
+                  step={step}
+                  question={questions[step - 1]?.question}
+                  options={questions[step - 1]?.options}
+                  onAnswer={handleAnswer}
+                  onNext={handleNextStep}
+                  onBack={handlePreviousStep}
+                />
+              ) : (
+                <Result
+                  userInfo={userInfo}
+                  resultData={calculatePersonalityType()}
+                />
+              )
+            }
+          />
+          <Route path="*" element={<Welcome />} />
+        </Routes>
+      </main>
+    </div>
   );
 };
 
