@@ -2,6 +2,7 @@ import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import UserInfoForm from "./components/UserInfoForm";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 import Quiz from "./components/Quiz";
 import Result from "./components/Result";
 import { useState } from "react";
@@ -43,15 +44,12 @@ const App = () => {
       frequency[answer] = (frequency[answer] || 0) + 1;
     });
 
-    // Sort categories by frequency
     const sortedCategories = Object.keys(frequency).sort(
       (a, b) => frequency[b] - frequency[a]
     );
 
-    // The most frequent category is the primary personality type
     const primaryPersonalityType = sortedCategories[0];
 
-    // Return the primary personality type and the top 2 or 3 categories
     return {
       personalityType: primaryPersonalityType,
       topCategories: sortedCategories.slice(0, 3),
@@ -60,35 +58,40 @@ const App = () => {
 
   return (
     <div className="App">
-      <header>
+      <header className="navbar">
         <Navbar />
       </header>
       <main>
-        <Routes>
-          <Route
-            path="/quiz"
-            element={
-              step === 0 ? (
-                <UserInfoForm onSubmit={handleFormSubmit} />
-              ) : step <= questions.length ? (
-                <Quiz
-                  step={step}
-                  question={questions[step - 1]?.question}
-                  options={questions[step - 1]?.options}
-                  onAnswer={handleAnswer}
-                  onNext={handleNextStep}
-                  onBack={handlePreviousStep}
-                />
-              ) : (
-                <Result
-                  userInfo={userInfo}
-                  resultData={calculatePersonalityType()}
-                />
-              )
-            }
-          />
-          <Route path="*" element={<Welcome />} />
-        </Routes>
+        <TransitionGroup>
+          <CSSTransition key={step} timeout={300} classNames="fade">
+            <Routes>
+              <Route
+                path="/quiz"
+                element={
+                  step === 0 ? (
+                    <UserInfoForm onSubmit={handleFormSubmit} />
+                  ) : step <= questions.length ? (
+                    <Quiz
+                      step={step}
+                      question={questions[step - 1]?.question}
+                      options={questions[step - 1]?.options}
+                      onAnswer={handleAnswer}
+                      onNext={handleNextStep}
+                      onBack={handlePreviousStep}
+                    />
+                  ) : (
+                    <Result
+                      userInfo={userInfo}
+                      resultData={calculatePersonalityType()}
+                    />
+                  )
+                }
+              />
+
+              <Route path="*" element={<Welcome />} />
+            </Routes>
+          </CSSTransition>
+        </TransitionGroup>
       </main>
     </div>
   );

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-
+import ShareModal from "./ShareModal";
+import { FaExternalLinkAlt } from "react-icons/fa";
 const Result = ({ userInfo, resultData }) => {
   const { personalityType, topCategories } = resultData;
 
@@ -62,7 +63,24 @@ const Result = ({ userInfo, resultData }) => {
     },
   };
 
-  const [selectedCategory, setSelectedCategory] = useState(topCategories[0]);
+  const [selectedCategories, setSelectedCategories] = useState(topCategories);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const toggleCategorySelection = (category) => {
+    setSelectedCategories((prevSelected) =>
+      prevSelected.includes(category)
+        ? prevSelected.filter((cat) => cat !== category)
+        : [...prevSelected, category]
+    );
+  };
+
+  const openShareModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeShareModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="result">
@@ -82,38 +100,62 @@ const Result = ({ userInfo, resultData }) => {
           <button
             key={index}
             className={`category-tab ${
-              selectedCategory === category ? "active" : ""
+              selectedCategories.includes(category) ? "active" : ""
             }`}
-            onClick={() => setSelectedCategory(category)}
+            onClick={() => toggleCategorySelection(category)}
           >
             {categoryMessages[category].title}
           </button>
         ))}
       </div>
-
+      <hr />
+      <p className="para">Click on a product below to preview it.</p>
       <div className="category-details">
-        {categoryMessages[selectedCategory] && (
+        {selectedCategories.map((category, index) => (
           <Link
-            to={categoryMessages[selectedCategory].url}
+            key={index}
+            to={categoryMessages[category].url}
             target="_blank"
             rel="noopener noreferrer"
           >
             <div className="category-card">
-              <h3 className="card-heading">
-                {categoryMessages[selectedCategory].title}
-              </h3>
-              <p className="card-para">
-                {categoryMessages[selectedCategory].description}
-              </p>
+              <div className="link-wrapper">
+                <FaExternalLinkAlt />
+              </div>
+              <div className="card-text">
+                <h3 className="card-heading">
+                  {categoryMessages[category].title}
+                </h3>
+                <p className="card-para">
+                  {categoryMessages[category].description}
+                </p>
+              </div>
             </div>
           </Link>
-        )}
+        ))}
       </div>
 
-      <div className="action-buttons">
-        <button className="btn btn--back">Subscribe</button>
-        <button className="btn btn--submit">Save & Share</button>
+      <div className="result-action-buttons">
+        <Link
+          to={"https://www.nytimes.com/subscription"}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <button className="btn btn--back">Subscribe</button>
+        </Link>
+        <button className="btn btn--submit" onClick={openShareModal}>
+          Save & Share
+        </button>
       </div>
+
+      <ShareModal
+        show={isModalOpen}
+        onClose={closeShareModal}
+        selectedCategories={selectedCategories}
+        personalityType={personalityType}
+        categoryMessages={categoryMessages}
+        personalityMessages={personalityMessages}
+      />
     </div>
   );
 };

@@ -12,7 +12,7 @@ function Welcome() {
       setCurrentIndex((prevIndex) => {
         if (prevIndex + 1 === items.length) {
           clearInterval(interval);
-          return prevIndex;
+          return prevIndex; // Keep the last item displayed
         }
         return prevIndex + 1;
       });
@@ -62,6 +62,7 @@ function Welcome() {
                 </div>
               </div>
               <div className="cta-action-section">
+                {/* <button className="cta-button">Take the quiz</button> */}
                 <a href="/quiz" className="cta-button">
                   Take the quiz
                 </a>
